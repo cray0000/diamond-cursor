@@ -73,6 +73,8 @@ In the open editor, press **Esc**, type `:set esckeys`, and press **Enter**. Pre
 set esckeys
 ```
 
+If you opened the file with `sudo vi`, Vim usually reads root’s `/root/.vimrc`. The same `:set esckeys` command fixes the open session. For future sessions, add `set esckeys` to root’s Vim config, or use `SUDO_EDITOR=vi sudoedit /path/to/file` to edit a protected file with your own Vim settings.
+
 ## Manual removal
 
 To remove the standalone config, delete its file and restart the service.
