@@ -63,17 +63,15 @@ journalctl -u keyd.service -b --no-pager
 
 The `[alt]` layer handles Left Alt. Unmapped combinations such as Alt + Tab keep their usual behavior, and Right Alt remains available for AltGr. Left Ctrl has its own layer so only the physical **Left Ctrl** activates Home and End with Left Alt.
 
-## Terminal vi prints A, B, C, or D in Insert mode
+## Troubleshooting
 
-On Ubuntu, `vi` can run Vim Tiny with the `esckeys` option off. In that mode Vim reads a terminal arrow sequence as separate keystrokes after you press `i`. This affects both physical arrows and the diamond.
+### Terminal vi prints A, B, C, or D in Insert mode
 
-In the open editor, press **Esc**, type `:set esckeys`, and press **Enter**. Press **i** and try the arrows again. To keep the fix for future sessions, add the following line to your `~/.vimrc`.
+This Vim behavior is independent of Diamond Cursor and `keyd`. On Ubuntu, `vi` can start Vim Tiny with `esckeys` turned off. It then reads a terminal arrow sequence as separate keystrokes in Insert mode, even when you press a physical arrow on a machine without Diamond Cursor.
 
-```vim
-set esckeys
-```
+Press **Esc** and run `:set esckeys?`. If Vim reports `noesckeys`, run `:set esckeys`, press **i**, and try a physical arrow again. To keep the fix for future sessions, add `set esckeys` to your `~/.vimrc`.
 
-If you opened the file with `sudo vi`, Vim usually reads root’s `/root/.vimrc`. The same `:set esckeys` command fixes the open session. For future sessions, add `set esckeys` to root’s Vim config, or use `SUDO_EDITOR=vi sudoedit /path/to/file` to edit a protected file with your own Vim settings.
+With `sudo vi`, the same command fixes the open session. For future sessions, add `set esckeys` to root’s Vim config (usually `/root/.vimrc`), or use `SUDO_EDITOR=vi sudoedit /path/to/file` to edit a protected file with your own Vim settings.
 
 ## Manual removal
 
