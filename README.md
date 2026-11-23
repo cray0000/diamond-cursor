@@ -1,22 +1,56 @@
-> Some scripts and configs I use which might be good to share with others.
+# Diamond Cursor
 
-## Linux
+Move and select text without reaching for the arrow keys. Hold the modifier with your left thumb and use the **I/J/K/L** diamond with your right hand. The mappings work across applications and follow physical US QWERTY key positions, so the diamond stays under the same fingers when you switch to Dvorak, Russian, or another layout.
 
-The [Linux diamond cursor](linux/README.md) uses Left Alt for system-wide navigation and selection on the same physical keys across keyboard layouts.
+## Mappings
 
-## [karabiner.json](/karabiner.json)
+Hold **Left Alt** on Linux. On macOS, hold **Left Option** on a standard keyboard or **Left Command** on the Apple laptop keyboards remapped by the Universal profile.
 
-My [Karabiner-Elements](https://pqrs.org/osx/karabiner/) config for EU-type Mac keyboard with the following features:
+| While holding the modifier, press | Result |
+| --- | --- |
+| I | ↑ Up |
+| J | ← Left |
+| K | ↓ Down |
+| L | → Right |
+| U / M | Page Up / Page Down |
+| H / apostrophe (`'`) | Backspace / Forward Delete |
+| Semicolon (`;`) | Escape |
+| Left Ctrl + J / L | Home / End on Linux, ⌘← / ⌘→ on macOS |
 
-1. diamond cursor (Alt+jkli to arrows).
-2. extended diamond cursor configuration for easy Enter, Delete, Backspace, Esc, PgUp, PgDown, Home, End.
-3. emulation of US-type keyboard on the built-in EU-type Macbook keyboard.
+Add **either Shift** to send the shifted version of any mapped key. For example, hold the modifier and Shift, then tap **L** to select one character to the right. Add **Left Ctrl** to select to the end of the line in a typical text editor.
 
-### Installation:
+## Quick install
 
-1. Put `karabiner.json` to `~/.config/karabiner/karabiner.json`. Overwrite the existing one.
-2. Open Karabiner-Elements preferenses, go to `Profiles`, select the `Universal` profile. It supports both the built-in EU apple keyboard and the external USB keyboards. If you have a US-type keyboard MacBook, select the `Keyboard` profile.
+Clone the repository once, then follow the steps for your operating system.
 
-# Licence
+```sh
+git clone https://github.com/cray0000/diamond-cursor.git
+cd diamond-cursor
+```
+
+### Ubuntu
+
+Run the installer from the repository root.
+
+```sh
+./linux/install.sh
+```
+
+The script sets up `keyd` and enables the mapping at boot. For other Linux distributions, existing `keyd` setups, and uninstall instructions, see the [Linux guide](linux/README.md).
+
+### macOS
+
+Install Karabiner-Elements and follow its permission prompts. If you already use Karabiner, back up your profiles first. The supplied JSON replaces the entire configuration. [Karabiner setup](https://karabiner-elements.pqrs.org/docs/getting-started/installation/)
+
+Copy the configuration from the repository root.
+
+```sh
+mkdir -p ~/.config/karabiner
+cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
+```
+
+Open **Karabiner-Elements Settings → Profiles** and select **Universal**. The [macOS guide](macos/README.md) explains the other profiles, Apple keyboard remaps, and how to restore a backup.
+
+## License
 
 MIT
