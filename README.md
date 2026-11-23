@@ -1,5 +1,9 @@
 > Some scripts and configs I use which might be good to share with others.
 
+## Linux
+
+The [Linux diamond cursor](linux/README.md) uses Left Alt for system-wide navigation and selection on the same physical keys across keyboard layouts.
+
 ## [karabiner.json](/karabiner.json)
 
 My [Karabiner-Elements](https://pqrs.org/osx/karabiner/) config for EU-type Mac keyboard with the following features:
