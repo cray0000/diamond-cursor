@@ -1,6 +1,6 @@
 # Testing the Linux diamond cursor
 
-Run the following from the repository’s `linux/` directory.
+GitHub Actions runs both suites on Ubuntu for every push. To run them locally, start in the repository’s `linux/` directory. [Linux workflow](../../.github/workflows/linux-tests.yml)
 
 **Installer tests** need Python 3 and Bubblewrap (`bubblewrap` on Ubuntu). They run the real scripts in a disposable filesystem with simulated APT and systemd commands.
 
