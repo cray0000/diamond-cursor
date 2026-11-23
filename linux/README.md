@@ -63,6 +63,16 @@ journalctl -u keyd.service -b --no-pager
 
 The `[alt]` layer handles Left Alt. Unmapped combinations such as Alt + Tab keep their usual behavior, and Right Alt remains available for AltGr. Left Ctrl has its own layer so only the physical **Left Ctrl** activates Home and End with Left Alt.
 
+## Terminal vi prints A, B, C, or D in Insert mode
+
+On Ubuntu, `vi` can run Vim Tiny with the `esckeys` option off. In that mode Vim reads a terminal arrow sequence as separate keystrokes after you press `i`. This affects both physical arrows and the diamond.
+
+In the open editor, press **Esc**, type `:set esckeys`, and press **Enter**. Press **i** and try the arrows again. To keep the fix for future sessions, add the following line to your `~/.vimrc`.
+
+```vim
+set esckeys
+```
+
 ## Manual removal
 
 To remove the standalone config, delete its file and restart the service.
