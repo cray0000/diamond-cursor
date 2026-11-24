@@ -1,0 +1,5 @@
+# Installed by Diamond Cursor for libinput's disable-while-typing feature.
+[Diamond Cursor keyd keyboard]
+MatchUdevType=keyboard
+MatchName=keyd virtual keyboard
+AttrKeyboardIntegration=internal

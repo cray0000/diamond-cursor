@@ -36,7 +36,7 @@ Run the installer from the repository root.
 ./linux/install.sh
 ```
 
-The script sets up `keyd` and enables the mapping at boot. For other Linux distributions, existing `keyd` setups, and uninstall instructions, see the [Linux guide](linux/README.md).
+The script sets up `keyd` and enables the mapping at boot. It also includes a touchpad pairing rule so laptops can keep suppressing accidental touches while you type. For other Linux distributions, existing configurations, and uninstall instructions, see the [Linux guide](linux/README.md).
 
 ### macOS
 

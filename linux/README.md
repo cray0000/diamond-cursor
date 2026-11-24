@@ -12,6 +12,8 @@ From the `linux/` directory in your clone, run the installer.
 
 The script asks for sudo, reuses an existing `keyd` service or installs it from your configured APT repositories, and enables the mapping now and at boot. For Ubuntu releases before 25.04, see [Manual install](#manual-install) for the backport. From the repository root, use `./linux/install.sh`.
 
+The installer also sets up touchpad pairing on a fresh install. Log out and back in, or reboot, for libinput to pick up the rule. If the installer reports an existing libinput override, follow [Touchpad pairing](#touchpad-pairing).
+
 To undo it, run `./uninstall.sh` from the same `linux/` directory. Uninstall removes the standalone mapping and keeps `keyd` available for other configurations.
 
 If you already have a wildcard `keyd` config or have edited `/etc/keyd/diamond.conf`, the script points you to the manual steps so you can keep your bindings.
@@ -57,6 +59,19 @@ Try holding **Left Alt + J** in a text editor. The cursor should keep moving lef
 journalctl -u keyd.service -b --no-pager
 ```
 
+### Touchpad pairing
+
+On laptops, libinput normally pairs the built-in touchpad with the built-in keyboard for **disable while typing**. With Diamond Cursor, keystrokes reach the desktop through `keyd virtual keyboard`. The pairing rule identifies that device as internal so your desktop can honor its existing touchpad setting and delay. An external keyboard remapped by keyd can also trigger the delay because its events come from the same virtual device. [libinput documentation](https://wayland.freedesktop.org/libinput/doc/latest/palm-detection.html#disable-while-typing)
+
+For a manual install, or if the installer kept an existing override, check `/etc/libinput/local-overrides.quirks`. If you already have a rule that matches the keyd keyboard and sets `AttrKeyboardIntegration=internal`, the pairing is set up. Otherwise, open the file and append the section from [keyd.quirks](keyd.quirks) below your existing sections. These commands also work on a fresh installation.
+
+```sh
+sudo mkdir -p /etc/libinput
+sudoedit /etc/libinput/local-overrides.quirks
+```
+
+Log out and back in, or reboot. With **disable while typing** enabled in your desktop settings, type a few letters while brushing the touchpad. The pointer should stay still while you type and respond again after the delay. [Local libinput overrides](https://wayland.freedesktop.org/libinput/doc/latest/device-quirks.html#installing-temporary-local-device-quirks)
+
 ## How it works
 
 `keyd` reads Linux input events and emits key presses through a virtual keyboard. This happens before the desktop applies its text layout, so one config covers Wayland, X11, the graphical login screen, and Linux virtual consoles once the service is running. The `*` in `[ids]` matches built-in and external keyboards. [keyd documentation](https://github.com/rvaiya/keyd)
@@ -83,6 +98,8 @@ sudo systemctl restart keyd.service
 ```
 
 If you merged the bindings into an existing config, remove those bindings and restart the service. For immediate recovery, press the physical **Backspace + Escape + Enter** keys together to stop `keyd`.
+
+`./uninstall.sh` removes the touchpad override when the whole file still matches the supplied [keyd.quirks](keyd.quirks). If you merged the rule or later added other device settings, remove just the `[Diamond Cursor keyd keyboard]` section with `sudoedit` to undo the pairing. You can keep it if you still use keyd for another keyboard config. Log out and back in, or reboot, to apply the removal.
 
 ## Tests
 

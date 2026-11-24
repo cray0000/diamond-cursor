@@ -12,8 +12,9 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 target=/etc/keyd/diamond.conf
-if [ ! -r diamond.conf ] || [ ! -d /run/systemd/system ]; then
-    echo "The installer needs diamond.conf next to install.sh and a running systemd." >&2
+quirks=/etc/libinput/local-overrides.quirks
+if [ ! -r diamond.conf ] || [ ! -r keyd.quirks ] || [ ! -d /run/systemd/system ]; then
+    echo "The installer needs diamond.conf and keyd.quirks next to install.sh and a running systemd." >&2
     exit 1
 fi
 
@@ -44,6 +45,17 @@ if [ "$(dpkg-query -W -f='${db:Status-Status}' keyd 2>/dev/null || true)" != ins
 fi
 
 install -C -D -m 0644 diamond.conf "$target"
+if [ ! -e "$quirks" ] && [ ! -L "$quirks" ]; then
+    mkdir -p /etc/libinput
+    # Publish a complete file only if the overrides path is still available.
+    staged=$(mktemp /etc/libinput/.diamond-cursor.XXXXXX)
+    trap 'rm -f -- "$staged"' EXIT
+    install -m 0644 keyd.quirks "$staged"
+    ln -T -- "$staged" "$quirks"
+    echo "Installed the keyd touchpad pairing rule. Log out and back in, or reboot, to apply it."
+elif [ -L "$quirks" ] || [ ! -f "$quirks" ] || ! cmp -s keyd.quirks "$quirks"; then
+    echo "Keeping existing $quirks. See Touchpad pairing in linux/README.md to check or merge the keyd rule."
+fi
 systemctl enable keyd.service
 systemctl restart keyd.service
 echo "Diamond cursor is active. Try Left Alt + J in a text editor."
