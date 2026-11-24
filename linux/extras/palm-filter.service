@@ -1,0 +1,22 @@
+[Unit]
+Description=Ignore touches starting within 30 mm of either touchpad edge
+BindsTo=dev-input-diamondpalm.device
+Wants=modprobe@uinput.service
+After=dev-input-diamondpalm.device modprobe@uinput.service
+
+[Service]
+Type=exec
+ExecStart=/usr/local/lib/diamond-cursor-palm-filter/unpalm --device-file /dev/input/diamondpalm --margin-left @MARGIN@ --margin-right @MARGIN@ --block-taps
+Restart=on-failure
+RestartSec=2s
+DevicePolicy=closed
+DeviceAllow=/dev/input/diamondpalm rw
+DeviceAllow=/dev/uinput rw
+CapabilityBoundingSet=
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+PrivateNetwork=yes
+
+[Install]
+WantedBy=dev-input-diamondpalm.device

@@ -11,7 +11,7 @@ CONFIG = (LINUX / "diamond.conf").read_bytes()
 QUIRK = (LINUX / "keyd.quirks").read_bytes()
 
 
-class InstallerTest(unittest.TestCase):
+class InstallerSandbox(unittest.TestCase):
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
@@ -25,6 +25,7 @@ class InstallerTest(unittest.TestCase):
         self.bin.mkdir()
         self.log = self.root / "commands"
         self.log.touch()
+        self.mounts = []
         self.stub("dpkg-query", '[ ! -e /tmp/state/package ] || echo installed')
         self.stub("apt-get", '''
             echo "apt-get $*" >> /tmp/state/commands
@@ -47,18 +48,21 @@ class InstallerTest(unittest.TestCase):
         script.write_text("#!/bin/sh\nset -eu\n" + body + "\n")
         script.chmod(0o755)
 
-    def run_script(self, name, success=True, uid=0):
+    def run_script(self, name, *args, success=True, uid=0):
         result = subprocess.run([
             "bwrap", "--unshare-all", "--die-with-parent", "--uid", str(uid), "--gid", str(uid),
             "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run",
             "--dir", "/run/systemd/system", "--tmpfs", "/tmp", "--bind", self.root, "/tmp/state",
             "--bind", self.etc, "/etc", "--ro-bind", LINUX, "/tmp/config repo/linux",
+            *self.mounts, "--setenv", "XDG_STATE_HOME", "/tmp/state/userstate",
             "--setenv", "PATH", "/tmp/state/bin:/usr/bin:/bin", "--chdir", "/tmp/config repo",
-            "--", f"./linux/{name}.sh",
+            "--", f"./linux/{name}.sh", *args,
         ], capture_output=True, text=True)
         self.assertEqual(result.returncode == 0, success, result.stdout + result.stderr)
         return result
 
+
+class InstallerTest(InstallerSandbox):
     def test_install_reinstall_remove(self):
         self.run_script("install")
         self.assertEqual(self.target.read_bytes(), CONFIG)

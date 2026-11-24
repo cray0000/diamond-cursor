@@ -23,6 +23,9 @@ jobs:
       - name: Test installation and removal
         run: python3 linux/test/installer.py -v
 
+      - name: Test optional touchpad extras
+        run: python3 -B linux/test/extras.py -v
+
       - name: Check out the keyd test dependency
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

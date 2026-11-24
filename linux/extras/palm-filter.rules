@@ -1,0 +1,5 @@
+# Select the same physical touchpad even if the kernel renumbers its event node.
+SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_TOUCHPAD}=="1", SYMLINK=="@BY_PATH@", SYMLINK+="input/diamondpalm", TAG+="systemd"
+
+# Keep disable-while-typing available on the filtered built-in touchpad.
+SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_TOUCHPAD}=="1", ATTRS{name}=="Filtered Touchpad", ENV{ID_INPUT_TOUCHPAD_INTEGRATION}="internal"

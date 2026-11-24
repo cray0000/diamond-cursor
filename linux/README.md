@@ -72,6 +72,44 @@ sudoedit /etc/libinput/local-overrides.quirks
 
 Log out and back in, or reboot. With **disable while typing** enabled in your desktop settings, type a few letters while brushing the touchpad. The pointer should stay still while you type and respond again after the delay. [Local libinput overrides](https://wayland.freedesktop.org/libinput/doc/latest/device-quirks.html#installing-temporary-local-device-quirks)
 
+## Optional extras
+
+Run these commands from the `linux/` directory. Each extra has its own install and uninstall commands and works independently of the Diamond Cursor bindings.
+
+### 300 ms delay after typing
+
+This extra sets GNOME’s **disable while typing** delay to 300 ms for your account. It takes effect immediately and persists across logins. The delay applies when **disable while typing** is enabled. If you use keyd, set up [touchpad pairing](#touchpad-pairing) first.
+
+Run this in your GNOME session as your regular user. It needs the `disable-while-typing-timeout` setting, `gsettings`, and the `dconf` command (`dconf-cli` on Ubuntu).
+
+```sh
+./extras/typing-delay.sh install
+```
+
+To restore your previous delay, run the command below. If you chose a different delay after installation, uninstall keeps that choice.
+
+```sh
+./extras/typing-delay.sh uninstall
+```
+
+### 30 mm palm filter on both touchpad edges
+
+This extra uses unpalm to ignore touches and light taps that **start** in the outer 30 mm on either side of your built-in touchpad. A swipe that starts in the middle continues tracking into both edges. A physical click can still register. On a 125 mm pad, the two strips leave 65 mm in the middle for starting swipes and taps. [How unpalm works](https://github.com/rpodgorny/unpalm/blob/v0.2.2/README.md#how-it-works)
+
+```sh
+./extras/palm-filter.sh install
+```
+
+The installer asks for sudo, reads the pad’s width from udev, and converts 30 mm into the percentage unpalm expects. It requires systemd, udev, kernel uinput support, and a touchpad with a stable `/dev/input/by-path/` link and a reported width greater than 60 mm. If automatic selection is ambiguous, run `./extras/palm-filter.sh install /dev/input/eventN` with the built-in pad’s event node. The installer remembers its stable path for future boots.
+
+The script reuses an installed `unpalm` executable. On x86-64, it can also download the pinned v0.2.2 release with `curl` and verify its SHA-256 checksum. On other architectures, install unpalm with your package manager or from source first. If you already run a separate unpalm filter, you can keep using it. [Upstream installation instructions](https://github.com/rpodgorny/unpalm/blob/v0.2.2/README.md#installation)
+
+The filter starts immediately and whenever the touchpad appears after boot. Check it with `systemctl status diamond-cursor-palm-filter.service`. To return to normal touchpad input and remove the extra from startup, run the command below. An existing system copy of unpalm stays installed.
+
+```sh
+./extras/palm-filter.sh uninstall
+```
+
 ## How it works
 
 `keyd` reads Linux input events and emits key presses through a virtual keyboard. This happens before the desktop applies its text layout, so one config covers Wayland, X11, the graphical login screen, and Linux virtual consoles once the service is running. The `*` in `[ids]` matches built-in and external keyboards. [keyd documentation](https://github.com/rvaiya/keyd)
@@ -103,4 +141,4 @@ If you merged the bindings into an existing config, remove those bindings and re
 
 ## Tests
 
-The [test instructions](test/README.md) cover installer behavior and the physical key bindings. Both suites run without sudo or access to the live keyboard.
+The [test instructions](test/README.md) cover installer behavior, the optional extras, and the physical key bindings. The tests run without sudo or access to the live keyboard or touchpad.
