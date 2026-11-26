@@ -677,6 +677,48 @@ footer .brand {
   font: 500 .77rem var(--mono);
   color: #c9d1df;
 }
+.install-steps {
+  --step-size: clamp(2rem, 3vw, 2.5rem);
+  --step-indent: calc(var(--step-size) + 1rem);
+  display: grid;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+  margin: clamp(1.25rem, 2vw, 1.75rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.install-steps > li {
+  position: relative;
+  min-width: 0;
+  padding-inline-start: var(--step-indent);
+}
+.install-steps > li::before {
+  content: counter(list-item);
+  content: counter(list-item) / "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: var(--step-size);
+  height: var(--step-size);
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.install-steps h4 {
+  display: flex;
+  align-items: center;
+  min-height: var(--step-size);
+  margin: 0 0 .5rem;
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+.install-steps p { max-width: 72ch; }
+.install-steps p + p { margin-top: .5rem; }
+.install-steps .code-wrap, .install-steps li > pre { margin: .75rem 0 0; }
 .practice {
   gap: clamp(16px, 4vw, 58px);
   justify-content: space-between;
@@ -866,6 +908,8 @@ footer .brand {
 .tool-list span { display: block; margin-top: 3px; color: var(--muted); }
 @media (max-width: 575px) {
   .setup-head { flex-wrap: wrap; gap: 14px; margin-bottom: 15px; }
+  .install-steps > li { padding-inline-start: 0; }
+  .install-steps h4 { padding-inline-start: var(--step-indent); }
   .switcher a { min-width: 62px; padding: 8px 9px; }
   .practice { display: grid; }
   .practice input { padding: 12px 10px; }

@@ -59,9 +59,21 @@
       <article class="panel" id="macos" aria-label="macOS quick start">
         <div class="install">
           <h3>Install on macOS</h3>
-          $mac_prepare
-          $mac_commands
-          $mac_activate
+          <ol class="install-steps" role="list">
+            <li>
+              <h4>Install Karabiner-Elements</h4>
+              $mac_prepare
+            </li>
+            <li>
+              <h4>Copy the configuration</h4>
+              <p>Run this block in Terminal as your normal user.</p>
+              $mac_commands
+            </li>
+            <li>
+              <h4>Select the Universal profile</h4>
+              $mac_activate
+            </li>
+          </ol>
         </div>
         $mac_practice
         <p class="guide-link"><a href="macos.html">Full macOS guide</a></p>
