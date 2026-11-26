@@ -563,6 +563,7 @@ footer .brand {
 }
 .switcher a:hover:not([aria-selected="true"]) { background: #edece4; }
 .panel {
+  scroll-margin-block-start: clamp(100px, 12vw, 150px);
   background: var(--paper);
   border: 1px solid #cecec1;
   border-radius: 12px;
