@@ -197,6 +197,14 @@ h1 em {
   color: var(--ink);
 }
 
+.pitch .key-note {
+  display: block;
+  margin-top: 8px;
+  font-size: .875rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .button {
   margin-top: 20px;
   background: var(--ink);
