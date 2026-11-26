@@ -19,7 +19,15 @@ cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
 
 ### Choose the Universal profile
 
-Open **Karabiner-Elements Settings → Profiles** and select **Universal**. Use **Left Option** on most keyboards or **Left Command** on the two Apple laptop keyboards recognized by Universal. [Compare profiles](#profiles)
+Open **Karabiner-Elements Settings → Profiles** and select **Universal**. In a text field, hold the key **directly left of the space bar** with your left thumb and tap the physical **J** key. The cursor should move left.
+
+Universal uses **⌘ Command** on the two MacBook keyboards it recognizes and **Alt (Option)** on a PC-style external keyboard. Both work with the default macOS modifier settings. [If the key beside Space needs a remap](#set-up-another-keyboard)
+
+### Set up another keyboard
+
+The diamond shortcuts expect `left_option` inside Karabiner. If a different key activates the diamond, use Karabiner-EventViewer to check the original key code of the key directly left of Space. In **Karabiner-Elements Settings → Simple Modifications**, select that keyboard and map its key code to `left_option`. Karabiner evaluates the diamond shortcut before macOS applies its own modifier swaps. [How to read original key codes](https://karabiner-elements.pqrs.org/docs/manual/operation/eventviewer/) · [Karabiner’s processing order](https://karabiner-elements.pqrs.org/docs/manual/misc/event-modification-chaining/)
+
+For example, on another Apple keyboard with **⌘ Command** beside Space, set `left_command` → `left_option`. To match the recognized MacBooks, also set `left_option` → `left_control`. Universal already maps `left_control` → `left_command`, so physical Left Control+C copies text.
 
 ## Profiles
 

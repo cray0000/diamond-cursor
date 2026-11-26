@@ -231,7 +231,7 @@ def home_page(guides, routes):
                      mac_prepare=mac_install.child("macos-prepare-karabiner-elements").content(),
                      mac_commands=commands(mac_install.child("macos-copy-the-configuration")),
                      mac_activate=mac_install.child("macos-choose-the-universal-profile").content(),
-                     mac_practice=template("practice.html", platform="macos", modifier="your keyboard’s modifier"))
+                     mac_practice=template("practice.html", platform="macos", modifier="the key beside Space"))
     write_page("index.html", "Diamond Cursor · Keyboard navigation for Linux and macOS",
                "Move and select text with the physical I/J/K/L diamond. Explore the map and install on Linux or macOS.",
                index, home="", scripts='<script src="ui.js" defer></script><script src="edit-demo.js" defer></script>')

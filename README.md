@@ -53,7 +53,7 @@ mkdir -p ~/.config/karabiner
 cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
 ```
 
-Open **Karabiner-Elements Settings → Profiles** and select **Universal**. The [macOS guide](macos/README.md) explains the other profiles, Apple keyboard remaps, and how to restore a backup.
+Open **Karabiner-Elements Settings → Profiles** and select **Universal**. Hold the key directly left of the space bar and tap **J** to move left. With default macOS settings, use **⌘ Command** on the two MacBook keyboards Universal recognizes, or **Alt (Option)** on a PC-style external keyboard. [Set up another keyboard](macos/README.md#set-up-another-keyboard)
 
 ## License
 

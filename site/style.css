@@ -222,12 +222,6 @@ h1 em {
   background: #30415b;
 }
 
-.button span {
-  color: var(--orange);
-  font-size: 20px;
-  line-height: 1;
-}
-
 .atlas {
   scroll-margin-top: 16px;
 }
