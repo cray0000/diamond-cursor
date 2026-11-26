@@ -198,11 +198,10 @@
     }
   }
 
-  let mode = 0, time = 0, solo = false, playing = !reducedMotion.matches, finished = false;
+  let mode = 0, time = 0, solo = false, playing = !reducedMotion.matches;
   let visible = false, started = false, request = 0, lastTime = null, lastFrame = "";
   function statusFor(index, isEdit) {
-    if (index !== mode) return index === 1 && !solo ? "Up next" : "At rest";
-    if (finished) return "Finished";
+    if (index !== mode) return solo ? "At rest" : "Up next";
     if (!playing) return "Paused";
     if (mode === 1 && isEdit) return "Left Alt held";
     return solo ? "Looping" : "Playing";
@@ -218,7 +217,7 @@
     const progress = Math.max(0, Math.min(1, t / (step.travel || step.strike)));
     const ease = reducedMotion.matches ? 1 : progress * progress * (3 - 2 * progress);
     paintHand(active, step.from, step.target, ease);
-    const stamp = [mode, step.start, pressed, moving, solo, playing, finished].join("/");
+    const stamp = [mode, step.start, pressed, moving, solo, playing].join("/");
     if (stamp === lastFrame) return;
     lastFrame = stamp;
     const other = 1 - mode;
@@ -251,7 +250,7 @@
     });
     figure.classList.toggle("solo", solo);
     compareButton.hidden = !solo;
-    playButton.textContent = finished ? "Replay" : playing ? "Pause" : "Play";
+    playButton.textContent = playing ? "Pause" : "Play";
   }
 
   function frame(now) {
@@ -259,17 +258,11 @@
     if (lastTime !== null) time += now - lastTime;
     lastTime = now;
     if (time >= passes[mode].length) {
-      if (solo || mode === 0) {
-        if (!solo) mode = 1;
-        time = 0;
-      } else {
-        time = passes[mode].length;
-        finished = true;
-        playing = false;
-      }
+      if (!solo) mode = 1 - mode;
+      time = 0;
     }
     render();
-    if (playing) request = requestAnimationFrame(frame);
+    request = requestAnimationFrame(frame);
   }
 
   function sync() {
@@ -284,7 +277,6 @@
     time = 0;
     solo = loop;
     playing = true;
-    finished = false;
     sync();
   }
   methods.forEach((button, index) => button.addEventListener("click", () => start(index, true)));
@@ -293,12 +285,9 @@
     playButton.focus();
   });
   playButton.addEventListener("click", () => {
-    if (finished) start(0, false);
-    else {
-      started = true;
-      playing = !playing;
-      sync();
-    }
+    started = true;
+    playing = !playing;
+    sync();
   });
   reducedMotion.addEventListener("change", () => {
     if (reducedMotion.matches) playing = false;
