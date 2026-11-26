@@ -126,10 +126,24 @@ def anchor_link(url, title):
     return f'<a href="{escape(url)}">{escape(title)}</a>'
 
 
-def document(filename, *, title, heading_id, intro, body, description, sections=(), parents=(), related=""):
+def docs_navigation(current, tools):
+    def link(url, label):
+        state = ' aria-current="page"' if url == current else ""
+        return f'<a href="{escape(url)}"{state}>{escape(label)}</a>'
+
+    guides = (("./", "Project overview"), ("bindings.html", "Key reference"),
+              ("linux.html", "Linux guide"), ("macos.html", "macOS guide"))
+    pages = "".join(f"<li>{link(url, label)}</li>" for url, label in guides)
+    utilities = "".join(f"<li>{link(tool.id + '.html', tool.title)}</li>" for tool in tools)
+    overview = link("touchpad.html", "Linux touchpad tools")
+    return f'<ul class="doc-pages">{pages}<li>{overview}<ul>{utilities}</ul></li></ul>'
+
+
+def document(filename, *, tools, title, heading_id, intro, body, description, sections=(), parents=(), related=""):
     trail = [anchor_link("./", "Diamond Cursor"), *(anchor_link(url, name) for url, name in parents)]
     trail.append(f'<span aria-current="page">{escape(title)}</span>')
-    content = template("guide.html", breadcrumbs='<span aria-hidden="true">/</span>'.join(trail),
+    content = template("guide.html", navigation=docs_navigation(filename, tools),
+                       breadcrumbs='<span aria-hidden="true">/</span>'.join(trail),
                        heading=escape(title), anchor=heading_id, intro=intro, body=body,
                        contents=contents(sections), related=related)
     write_page(filename, title + " · Diamond Cursor", description, content)
@@ -221,8 +235,8 @@ def home_page(guides, routes):
                index, home="", scripts='<script src="ui.js" defer></script>')
 
 
-def key_reference(bindings):
-    document("bindings.html", title="Key reference", heading_id=bindings.id, intro="",
+def key_reference(bindings, tools):
+    document("bindings.html", tools=tools, title="Key reference", heading_id=bindings.id, intro="",
              body=bindings.content(), description="The physical cursor, selection, and editing shortcuts on Linux and macOS.",
              related='<p class="related"><a href="./#setup">Install Diamond Cursor</a></p>')
 
@@ -236,7 +250,7 @@ def platform_guides(guides, extras, requirements):
             related += ('<aside class="related-tools"><h2>Also in this repository</h2>'
                         '<a href="touchpad.html">Optional Linux touchpad tools</a>'
                         '<p>Adjust palm rejection, the delay after typing, or two-finger scrolling independently.</p></aside>')
-        document(f"{platform}.html", title=f"{label} guide", heading_id=guide.id, intro=guide.content(),
+        document(f"{platform}.html", tools=extras.children, title=f"{label} guide", heading_id=guide.id, intro=guide.content(),
                  body=sections_html(sections), sections=sections, related=related,
                  description=f"Install, configure, and remove Diamond Cursor on {label}.")
 
@@ -262,10 +276,10 @@ def touchpad_guides(extras, requirements, needs_requirements):
         body += f'<section><h2>Install and remove</h2>{instructions}{sections_html(tool.children, 3)}</section>'
         if tool.id in needs_requirements:
             body += f'<section><h2>How the build works</h2>{build_notes}</section>'
-        document(filename, title=tool.title, heading_id=tool.id, intro=lead, description=description, body=body,
+        document(filename, tools=extras.children, title=tool.title, heading_id=tool.id, intro=lead, description=description, body=body,
                  parents=(("touchpad.html", "Touchpad tools"),),
                  related='<p class="related"><a href="touchpad.html">All touchpad tools</a></p>')
-    document("touchpad.html", title="Linux touchpad tools", heading_id=extras.id,
+    document("touchpad.html", tools=extras.children, title="Linux touchpad tools", heading_id=extras.id,
              intro="<p>Choose the touchpad behavior you want to change. Each tool installs and uninstalls independently of the keyboard mapping.</p>",
              description="Optional touchpad utilities for Linux laptops.", parents=(("linux.html", "Linux guide"),),
              body='<ul class="tool-list">' + "".join(links) + "</ul>")
@@ -280,7 +294,7 @@ def build():
 
     routes, needs_requirements = link_guides(guides, extras, requirements)
     home_page(guides, routes)
-    key_reference(guides[""].child("mappings"))
+    key_reference(guides[""].child("mappings"), extras.children)
     platform_guides(guides, extras, requirements)
     touchpad_guides(extras, requirements, needs_requirements)
     for name in ("style.css", "ui.js", "copy.js", "mark.svg"):

@@ -13,6 +13,8 @@ class Page(HTMLParser):
         self.ids = set()
         self.links = []
         self.bookmarks = False
+        self.in_docs_nav = False
+        self.doc_menus = []
         self.feed(path.read_text())
 
     def handle_starttag(self, tag, pairs):
@@ -23,6 +25,13 @@ class Page(HTMLParser):
             self.ids.add(element_id)
         if tag == "script" and element_id == "previous-links":
             self.bookmarks = True
+        if tag == "nav":
+            self.in_docs_nav = attrs.get("aria-label") == "Documentation"
+        if self.in_docs_nav:
+            if tag == "ul" and "doc-pages" in attrs.get("class", "").split():
+                self.doc_menus.append([])
+            if tag == "a":
+                self.doc_menus[-1].append((attrs["href"], attrs.get("aria-current")))
         for key in ("href", "src"):
             if attrs.get(key):
                 self.links.append(attrs[key])
@@ -34,12 +43,19 @@ class Page(HTMLParser):
     def handle_endtag(self, tag):
         if tag == "script":
             self.bookmarks = False
+        if tag == "nav":
+            self.in_docs_nav = False
 
 
 if __name__ == "__main__":
     pages = {path: Page(path) for path in DIST.glob("*.html")}
     assert DIST / "index.html" in pages, "Build the site before checking links."
+    destinations = {"./" if p.name == "index.html" else p.name for p in pages}
     for path, page in pages.items():
+        assert bool(page.doc_menus) == (path.name != "index.html"), path.name
+        for menu in page.doc_menus:
+            assert {url for url, _ in menu} == destinations, f"Incomplete documentation menu on {path.name}"
+            assert [url for url, state in menu if state == "page"] == [path.name], path.name
         for link in page.links:
             url = urlsplit(link)
             if url.scheme or url.netloc:

@@ -2,7 +2,7 @@
 
 The [public site](https://cray0000.github.io/diamond-cursor/) opens with the interactive key map and a quick install for Linux or macOS. The quick start combines the clone command from the main README with the install commands from the platform guides. The editable practice line receives keystrokes from the visitor’s operating system.
 
-Edit the Markdown guides to update setup commands, key bindings, or detailed instructions. The build publishes the mapping table as the key reference. Each platform gets a standalone guide. Third-level sections under **Optional extras** in the Linux README get individual touchpad-tool pages. An extra that links to **GNOME scroll requirements** includes those shared notes with its instructions. The homepage sets its own reading order while using the same command blocks as the guides.
+Edit the Markdown guides to update setup commands, key bindings, or detailed instructions. The build publishes the mapping table as the key reference. Each platform gets a standalone guide. Third-level sections under **Optional extras** in the Linux README get individual touchpad-tool pages and appear automatically in the shared documentation menu. An extra that links to **GNOME scroll requirements** includes those shared notes with its instructions. The homepage sets its own reading order while using the same command blocks as the guides.
 
 ## Preview locally
 
