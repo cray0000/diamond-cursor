@@ -1,0 +1,253 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1280" height="474" viewBox="0 0 1280 474" role="img" aria-labelledby="dc-map-title dc-map-desc">
+  <title id="dc-map-title">Diamond Cursor keyboard map</title>
+  <desc id="dc-map-desc">Hold the cursor layer modifier. The physical US QWERTY positions I, J, K and L send Up, Left, Down and Right. U and M send Page Up and Page Down. H sends Backspace, semicolon sends Escape, and apostrophe sends Forward Delete. Add Shift to select or Left Ctrl with J and L for line start and end.</desc>
+  <defs>
+    <linearGradient id="dc-case" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#202b3e"/><stop offset=".56" stop-color="#192437"/><stop offset="1" stop-color="#162033"/>
+    </linearGradient>
+    <linearGradient id="dc-tray" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#101827"/><stop offset="1" stop-color="#182132"/>
+    </linearGradient>
+    <linearGradient id="dc-gray" x2=".2" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#53627a"/><stop offset=".45" stop-color="#49576f"/><stop offset="1" stop-color="#425069"/>
+    </linearGradient>
+    <linearGradient id="dc-orange" x2=".25" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#ffaf6c"/><stop offset=".55" stop-color="#ff9f53"/><stop offset="1" stop-color="#fc9344"/>
+    </linearGradient>
+    <linearGradient id="dc-ivory" x2=".25" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#faf5e9"/><stop offset=".5" stop-color="#f3ecdf"/><stop offset="1" stop-color="#e9e1d2"/>
+    </linearGradient>
+    <linearGradient id="dc-edge" x1="0" x2="1" y1="0" y2="0" gradientUnits="objectBoundingBox">
+      <stop stop-color="#111b2b" stop-opacity=".82"/><stop offset=".043" stop-color="#111b2b" stop-opacity=".07"/>
+      <stop offset=".10" stop-color="#111b2b" stop-opacity="0"/><stop offset=".90" stop-color="#111b2b" stop-opacity="0"/>
+      <stop offset=".957" stop-color="#111b2b" stop-opacity=".07"/><stop offset="1" stop-color="#111b2b" stop-opacity=".82"/>
+    </linearGradient>
+    <clipPath id="dc-tray-clip"><rect x="35" y="72" width="1210" height="304" rx="8"/></clipPath>
+    <!-- Each key is 116 units wide on a 124-unit pitch. The arrow and editing caps share the same silhouette. -->
+    <g id="dc-context-cap">
+      <rect x="1" y="5" width="116" height="84" rx="11" fill="#0b1320"/>
+      <rect x="0" y="1" width="116" height="85" rx="11" fill="#2d394d"/>
+      <rect x="2.5" y="1" width="111" height="74" rx="8.5" fill="url(#dc-gray)" stroke="#69788e"/>
+    </g>
+    <g id="dc-cursor-cap">
+      <rect x="1" y="5" width="116" height="84" rx="11" fill="#0b1320"/>
+      <rect x="0" y="1" width="116" height="85" rx="11" fill="#ae5e30"/>
+      <rect x="2.5" y="1" width="111" height="74" rx="8.5" fill="url(#dc-orange)" stroke="#ffbe86"/>
+    </g>
+    <g id="dc-editing-cap">
+      <rect x="1" y="5" width="116" height="84" rx="11" fill="#0b1320"/>
+      <rect x="0" y="1" width="116" height="85" rx="11" fill="#aca699"/>
+      <rect x="2.5" y="1" width="111" height="74" rx="8.5" fill="url(#dc-ivory)" stroke="#fff9ef"/>
+    </g>
+    <path id="dc-arrow" d="M-15 0h30 M3-12 15 0 3 12" fill="none" stroke="#30271f" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <g id="dc-page-icon" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-7-6h14 M0 7V-2 M-4.5 2.5 0-2l4.5 4.5"/>
+    </g>
+    <path id="dc-delete-icon" d="M-8-5.5H3.5l5.5 5.5-5.5 5.5H-8z M-3-2 1 2 M1-2-3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect id="dc-ring-shape" x="4.5" y="3" width="107" height="69" rx="7.5" fill="none" stroke-width="3"/>
+    <style>
+      .dc-heading { font: bold 17px 'DejaVu Sans Mono', monospace; letter-spacing: 1.1px; fill: #dbe3eb; }
+      .dc-legend { font: 17px 'DejaVu Sans', sans-serif; fill: #d0d9e4; }
+      .dc-original { font: bold 19px 'DejaVu Sans Mono', monospace; fill: #524b40; }
+      .dc-cursor-original { fill: #71401e; }
+      .dc-context-label { font: 25px 'DejaVu Sans Mono', monospace; fill: #bdc9da; text-anchor: middle; }
+      .dc-action { font: bold 19px 'DejaVu Sans', sans-serif; letter-spacing: -.65px; fill: #282b2c; }
+      .dc-footer { font: 18px 'DejaVu Sans', sans-serif; fill: #d2dbe6; }
+      .dc-shortcut { font: bold 16px 'DejaVu Sans Mono', monospace; fill: #e0e6ee; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- The header, chassis and footer frame the same illustration in a README or on the website. -->
+  <rect width="1280" height="474" rx="21" fill="url(#dc-case)"/>
+  <rect x=".7" y=".7" width="1278.6" height="472.6" rx="20.3" fill="none" stroke="#37455c"/>
+  <g aria-hidden="true">
+    <path d="M37 33v-4h5 M55 29h5v4 M60 43v4h-5 M42 47h-5v-4"
+          fill="none" stroke="#ffab69" stroke-width="2" stroke-linecap="round"/>
+    <path d="M45 38h7" stroke="#ffab69" stroke-width="2" stroke-linecap="round"/>
+    <text x="76" y="44" class="dc-heading">PHYSICAL QWERTY POSITIONS</text>
+    <rect x="905" y="31" width="13" height="13" rx="3" fill="#ffa45c"/>
+    <text x="929" y="44" class="dc-legend">Arrow keys</text>
+    <rect x="1059" y="31" width="13" height="13" rx="3" fill="#f1eadb"/>
+    <text x="1083" y="44" class="dc-legend">Editing &amp; paging</text>
+  </g>
+  <rect x="31" y="69" width="1218" height="311" rx="13" fill="#344158"/>
+  <rect x="31" y="67" width="1218" height="312" rx="13" fill="#0c1523"/>
+  <rect x="35" y="72" width="1210" height="304" rx="8" fill="url(#dc-tray)"/>
+  <g clip-path="url(#dc-tray-clip)">
+    <!-- Top letter row -->
+    <g transform="translate(-68 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">E</text>
+    </g>
+    <g transform="translate(56 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">R</text>
+    </g>
+    <g transform="translate(180 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">T</text>
+    </g>
+    <g transform="translate(304 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">Y</text>
+    </g>
+    <g id="key-u" data-key="u" transform="translate(428 83)">
+      <use xlink:href="#dc-editing-cap"/>
+      <text x="13" y="25" class="dc-original">U</text>
+      <use xlink:href="#dc-page-icon" transform="translate(94 19) rotate(0)" color="#716b60"/>
+      <text x="12" y="59" class="dc-action" style="font-size:16.5px">Page up</text>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-i" data-key="i" transform="translate(552 83)">
+      <use xlink:href="#dc-cursor-cap"/>
+      <text x="13" y="25" class="dc-original dc-cursor-original">I</text>
+      <use xlink:href="#dc-arrow" transform="translate(59 43) rotate(-90)"/>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g transform="translate(676 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">O</text>
+    </g>
+    <g transform="translate(800 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">P</text>
+    </g>
+    <g transform="translate(924 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">[</text>
+    </g>
+    <g transform="translate(1048 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">]</text>
+    </g>
+    <g transform="translate(1172 83)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">\</text>
+    </g>
+
+    <!-- Home row starts one quarter of a key to the right of the row above. -->
+    <g transform="translate(-37 181)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">D</text>
+    </g>
+    <g transform="translate(87 181)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">F</text>
+      <path d="M50 67h16" stroke="#8794a8" stroke-width="2.4" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(211 181)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">G</text>
+    </g>
+    <g id="key-h" data-key="h" transform="translate(335 181)">
+      <use xlink:href="#dc-editing-cap"/>
+      <text x="13" y="25" class="dc-original">H</text>
+      <use xlink:href="#dc-delete-icon" transform="translate(94 19) rotate(180)" color="#716b60"/>
+      <text x="12" y="59" class="dc-action" style="font-size:16.5px">Backspace</text>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-j" data-key="j" transform="translate(459 181)">
+      <use xlink:href="#dc-cursor-cap"/>
+      <text x="13" y="25" class="dc-original dc-cursor-original">J</text>
+      <use xlink:href="#dc-arrow" transform="translate(59 43) rotate(180)"/>
+      <path d="M50 67h16" stroke="#d47b3e" stroke-width="2.4" stroke-linecap="round"/>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-k" data-key="k" transform="translate(583 181)">
+      <use xlink:href="#dc-cursor-cap"/>
+      <text x="13" y="25" class="dc-original dc-cursor-original">K</text>
+      <use xlink:href="#dc-arrow" transform="translate(59 43) rotate(90)"/>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-l" data-key="l" transform="translate(707 181)">
+      <use xlink:href="#dc-cursor-cap"/>
+      <text x="13" y="25" class="dc-original dc-cursor-original">L</text>
+      <use xlink:href="#dc-arrow" transform="translate(59 43) rotate(0)"/>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-semicolon" data-key="semicolon" transform="translate(831 181)">
+      <use xlink:href="#dc-editing-cap"/>
+      <text x="13" y="25" class="dc-original">;</text>
+      <path d="M98 15a7 7 0 1 1-9 0 M85 14h7v7 M86 15l6 6" fill="none" stroke="#716b60" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="12" y="59" class="dc-action">Escape</text>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g id="key-apostrophe" data-key="apostrophe" transform="translate(955 181)">
+      <use xlink:href="#dc-editing-cap"/>
+      <text x="13" y="25" class="dc-original">'</text>
+      <use xlink:href="#dc-delete-icon" transform="translate(94 19) rotate(0)" color="#716b60"/>
+      <text x="12" y="59" class="dc-action">Delete</text>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g transform="translate(1079 181)" aria-hidden="true">
+      <rect x="1" y="5" width="251" height="84" rx="11" fill="#0b1320"/>
+      <rect y="1" width="251" height="85" rx="11" fill="#2d394d"/>
+      <rect x="2.5" y="1" width="246" height="74" rx="8.5" fill="url(#dc-gray)" stroke="#69788e"/>
+      <text x="68" y="49" class="dc-context-label">Enter</text>
+    </g>
+
+    <!-- Bottom letter row starts half a key to the right of the home row. -->
+    <g transform="translate(25 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">C</text>
+    </g>
+    <g transform="translate(149 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">V</text>
+    </g>
+    <g transform="translate(273 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">B</text>
+    </g>
+    <g transform="translate(397 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">N</text>
+    </g>
+    <g id="key-m" data-key="m" transform="translate(521 279)">
+      <use xlink:href="#dc-editing-cap"/>
+      <text x="13" y="25" class="dc-original">M</text>
+      <use xlink:href="#dc-page-icon" transform="translate(94 19) rotate(180)" color="#716b60"/>
+      <text x="12" y="59" class="dc-action" style="font-size:16.5px">Page down</text>
+      <use class="dc-key-ring" xlink:href="#dc-ring-shape" stroke="transparent"/>
+    </g>
+    <g transform="translate(645 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">,</text>
+    </g>
+    <g transform="translate(769 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">.</text>
+    </g>
+    <g transform="translate(893 279)" aria-hidden="true">
+      <use xlink:href="#dc-context-cap"/>
+      <text x="58" y="49" class="dc-context-label">/</text>
+    </g>
+    <g transform="translate(1017 279)" aria-hidden="true">
+      <rect x="1" y="5" width="304" height="84" rx="11" fill="#0b1320"/>
+      <rect y="1" width="304" height="85" rx="11" fill="#2d394d"/>
+      <rect x="2.5" y="1" width="299" height="74" rx="8.5" fill="url(#dc-gray)" stroke="#69788e"/>
+      <text x="68" y="49" class="dc-context-label">Shift</text>
+    </g>
+    <rect x="35" y="72" width="1210" height="304" fill="url(#dc-edge)" pointer-events="none" aria-hidden="true"/>
+  </g>
+
+  <!-- Every chord below is used while holding the cursor layer modifier. -->
+  <g aria-hidden="true">
+    <path d="M38 421h8v-7l10 10-10 10v-7h-8z" fill="#ffa45c"/>
+    <text x="70" y="431" class="dc-footer" style="font-weight:bold;fill:#edf0f3">Hold layer modifier</text>
+    <path d="M301 407v35 M597 407v35" stroke="#435067"/>
+    <rect x="334" y="408" width="96" height="33" rx="6" fill="#2e3b50" stroke="#59667a"/>
+    <text x="382" y="430.5" class="dc-shortcut">+ Shift</text>
+    <text x="445" y="431" class="dc-footer">Select text</text>
+    <rect x="630" y="408" width="141" height="33" rx="6" fill="#2e3b50" stroke="#59667a"/>
+    <text x="700.5" y="430.5" class="dc-shortcut">+ Left Ctrl</text>
+    <text x="788" y="431" class="dc-footer">with</text>
+    <rect x="840" y="408" width="35" height="33" rx="6" fill="#2e3b50" stroke="#59667a"/>
+    <text x="857.5" y="430.5" class="dc-shortcut">J</text>
+    <text x="883" y="431" class="dc-footer">/</text>
+    <rect x="897" y="408" width="35" height="33" rx="6" fill="#2e3b50" stroke="#59667a"/>
+    <text x="914.5" y="430.5" class="dc-shortcut">L</text>
+    <text x="951" y="431" class="dc-footer">Line start / end</text>
+  </g>
+</svg>

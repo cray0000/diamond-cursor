@@ -1,6 +1,10 @@
 # Diamond Cursor
 
+<a href="https://cray0000.github.io/diamond-cursor/#key-map"><img src="assets/keyboard-map.png" width="100%" alt="Physical keyboard map. I, J, K and L are arrows. U and M page up and down, H is Backspace, semicolon is Escape, and apostrophe is Forward Delete."></a>
+
 Move and select text without reaching for the arrow keys. Hold the modifier with your left thumb and use the **I/J/K/L** diamond with your right hand. The mappings work across applications and follow physical US QWERTY key positions, so the diamond stays under the same fingers when you switch to Dvorak, Russian, or another layout.
+
+[Try the interactive key map and setup guides](https://cray0000.github.io/diamond-cursor/)
 
 ## Mappings
 

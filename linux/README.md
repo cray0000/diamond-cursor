@@ -1,4 +1,4 @@
-# Diamond cursor for Linux
+# Diamond Cursor for Linux
 
 Hold **Left Alt** to use the arrow keys under your right hand. The diamond follows the physical US QWERTY key positions across layouts. For example, the QWERTY **J** key types `h` in Programmer Dvorak and `о` in standard Russian. Left Alt turns that same key into Left Arrow in all three layouts.
 
@@ -9,6 +9,8 @@ From the repository root, run the installer.
 ```sh
 ./linux/install.sh
 ```
+
+### What the installer changes
 
 The script asks for sudo, reuses an existing `keyd` service or installs it from your configured APT repositories, and enables the mapping now and at boot. For Ubuntu releases before 25.04, see [Manual install](#manual-install) for the backport.
 

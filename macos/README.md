@@ -6,11 +6,11 @@ This Karabiner-Elements configuration includes the cursor diamond, editing keys,
 
 1. Install Karabiner-Elements, open its settings, and grant the permissions it requests. [Karabiner setup](https://karabiner-elements.pqrs.org/docs/getting-started/installation/)
 2. If you already use Karabiner, save a copy of `~/.config/karabiner/karabiner.json` somewhere you can find it again. This config replaces all profiles in that file.
-3. From this repository’s `macos/` directory, copy the file as your normal user. The copy command prompts before overwriting an existing file.
+3. From the repository root, copy the file as your normal user. The copy command prompts before overwriting an existing file.
 
    ```sh
    mkdir -p ~/.config/karabiner
-   cp -i karabiner.json ~/.config/karabiner/karabiner.json
+   cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
    ```
 
 4. Open **Karabiner-Elements Settings → Profiles** and select a profile. In a text editor, try holding the diamond modifier and tapping **J** to move left, then add **Shift** to select.
