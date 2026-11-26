@@ -1,6 +1,7 @@
 """Build GitHub Pages from the repository guides and physical keyboard map."""
 import configparser
 from dataclasses import dataclass, field
+from hashlib import sha256
 from html import escape
 import json
 import os
@@ -15,6 +16,7 @@ from markdown_it import MarkdownIt
 SITE = Path(__file__).resolve().parent
 ROOT = SITE.parent
 DIST = SITE / "dist"
+STYLESHEET_VERSION = sha256((SITE / "style.css").read_bytes()).hexdigest()[:12]
 REPO = "https://github.com/" + os.environ.get("GITHUB_REPOSITORY", "cray0000/diamond-cursor")
 BRANCH = os.environ.get("GITHUB_REF_NAME", "master")
 GUIDES = {"": ROOT / "README.md", "linux": ROOT / "linux/README.md", "macos": ROOT / "macos/README.md"}
@@ -151,7 +153,7 @@ def document(filename, *, tools, title, heading_id, intro, body, description, se
 
 def write_page(filename, title, description, content, home="./", scripts=""):
     page = template("page.html", title=escape(title), description=escape(description), content=content,
-                    repo=escape(REPO), home=home, scripts=scripts)
+                    repo=escape(REPO), home=home, scripts=scripts, stylesheet_version=STYLESHEET_VERSION)
     (DIST / filename).write_text(page)
 
 

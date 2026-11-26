@@ -1,4 +1,5 @@
 """Check internal links and old single-page bookmarks in the built Pages site."""
+from hashlib import sha256
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -50,8 +51,10 @@ class Page(HTMLParser):
 if __name__ == "__main__":
     pages = {path: Page(path) for path in DIST.glob("*.html")}
     assert DIST / "index.html" in pages, "Build the site before checking links."
+    css_version = sha256((DIST / "style.css").read_bytes()).hexdigest()[:12]
     destinations = {"./" if p.name == "index.html" else p.name for p in pages}
     for path, page in pages.items():
+        assert f"style.css?v={css_version}" in page.links, f"Stale stylesheet reference on {path.name}"
         assert bool(page.doc_menus) == (path.name != "index.html"), path.name
         for menu in page.doc_menus:
             assert {url for url, _ in menu} == destinations, f"Incomplete documentation menu on {path.name}"
