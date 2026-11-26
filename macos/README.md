@@ -4,16 +4,22 @@ This Karabiner-Elements configuration includes the cursor diamond, editing keys,
 
 ## Install
 
-1. Install Karabiner-Elements, open its settings, and grant the permissions it requests. [Karabiner setup](https://karabiner-elements.pqrs.org/docs/getting-started/installation/)
-2. If you already use Karabiner, save a copy of `~/.config/karabiner/karabiner.json` somewhere you can find it again. This config replaces all profiles in that file.
-3. From the repository root, copy the file as your normal user. The copy command prompts before overwriting an existing file.
+### Prepare Karabiner-Elements
 
-   ```sh
-   mkdir -p ~/.config/karabiner
-   cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
-   ```
+[Install Karabiner-Elements](https://karabiner-elements.pqrs.org/docs/getting-started/installation/), open its settings, and grant the permissions it requests. If you already use Karabiner, back up `~/.config/karabiner/karabiner.json` first. The supplied configuration replaces all profiles in that file.
 
-4. Open **Karabiner-Elements Settings → Profiles** and select a profile. In a text editor, try holding the diamond modifier and tapping **J** to move left, then add **Shift** to select.
+### Copy the configuration
+
+From the repository root, run the commands as your normal user. The copy prompts before overwriting an existing file.
+
+```sh
+mkdir -p ~/.config/karabiner
+cp -i macos/karabiner.json ~/.config/karabiner/karabiner.json
+```
+
+### Choose the Universal profile
+
+Open **Karabiner-Elements Settings → Profiles** and select **Universal**. Use **Left Option** on most keyboards or **Left Command** on the two Apple laptop keyboards recognized by Universal. [Compare profiles](#profiles)
 
 ## Profiles
 

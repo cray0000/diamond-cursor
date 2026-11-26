@@ -1,23 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f8f6ee">
-  <meta name="description" content="A system-wide cursor layer for Linux and macOS. Navigate and select text from the physical I/J/K/L diamond on any keyboard layout.">
-  <title>Diamond Cursor · Keyboard navigation for Linux and macOS</title>
-  <link rel="icon" href="mark.svg" type="image/svg+xml">
-  <link rel="preload" href="fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css">
-  <script src="ui.js" defer></script>
-</head>
-<body id="top">
-<a class="skip" href="#setup">Skip to setup</a>
-<header class="mast wrap">
-  <a class="brand" href="#top"><img src="mark.svg" width="34" height="34" alt="">Diamond Cursor</a>
-  <nav aria-label="Main"><a href="#key-map">Key map</a><a href="#setup">Setup</a><a class="source" href="$repo">GitHub <span aria-hidden="true">↗</span></a></nav>
-</header>
-<main>
+<main id="main">
   <section class="intro wrap" aria-labelledby="headline">
     <div><p class="platforms"><span class="pilot"></span> Linux <span aria-hidden="true">/</span> macOS</p>
     <h1 id="headline">Stay on the<br><em>home row.</em></h1></div>
@@ -30,21 +11,39 @@
         <output id="key-output" aria-live="polite"><kbd>J</kbd> Move left</output>
       </div>
     </div>
-    <details class="map-details disclosure" id="mappings"><summary>Full mapping table</summary><div class="prose drawer">$mappings</div></details>
+    <p class="reference-link"><a href="bindings.html">Full key reference</a></p>
   </section>
-  <section class="setup" id="setup"><div class="setup-grid wrap">
-    <div class="setup-intro"><h2>Set it up<span>.</span></h2>
-      <p>Choose your operating system for installation, configuration, and troubleshooting.</p>
-      <details class="clone disclosure" id="quick-install"><summary>Clone the repository</summary><div class="prose">$clone</div></details>
+  <section class="setup" id="setup" aria-labelledby="setup-title">
+    <div class="wrap">
+      <div class="setup-head">
+        <h2 id="setup-title">Set it up<span>.</span></h2>
+        <nav class="switcher" aria-label="Operating system">
+          <a href="#linux" id="tab-linux">Linux</a>
+          <a href="#macos" id="tab-macos">macOS</a>
+        </nav>
+      </div>
+      <article class="panel" id="linux" aria-label="Linux quick start">
+        <div class="install">
+          <h3>Install on Ubuntu</h3>
+          <p>On Ubuntu 25.04 or later, run these commands in a terminal. The installer sets up <strong>keyd</strong> and enables the shortcuts at boot.</p>
+          $linux_commands
+          <p class="aside">For earlier Ubuntu releases, other distributions, or existing keyd bindings, follow the <a href="linux.html#linux-manual-install">manual install guide</a>.</p>
+        </div>
+        $linux_practice
+        <p class="guide-link"><a href="linux.html">Full Linux guide</a></p>
+      </article>
+      <article class="panel" id="macos" aria-label="macOS quick start">
+        <div class="install">
+          <h3>Install on macOS</h3>
+          $mac_prepare
+          $mac_commands
+          $mac_activate
+        </div>
+        $mac_practice
+        <p class="guide-link"><a href="macos.html">Full macOS guide</a></p>
+      </article>
     </div>
-    <div class="guides">
-      <nav class="switcher" aria-label="Operating system"><a href="#linux" id="tab-linux">Linux</a><a href="#macos" id="tab-macos">macOS</a></nav>
-      $linux
-      $macos
-    </div>
-  </div></section>
+  </section>
 </main>
-<footer class="wrap"><a class="brand" href="#top"><img src="mark.svg" width="27" height="27" alt="">Diamond Cursor</a><a href="$repo">Source on GitHub <span aria-hidden="true">↗</span></a></footer>
 <script type="application/json" id="keys">$keys</script>
-</body>
-</html>
+<script type="application/json" id="previous-links">$previous_links</script>

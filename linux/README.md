@@ -114,7 +114,7 @@ The filter starts immediately and whenever the touchpad appears after boot. Chec
 
 ### Touchpad flick and stop
 
-Check the [GNOME scroll requirements](#gnome-scroll-requirements) before installing. Install this extra if a two-finger scroll keeps coasting after you stop moving and lift your fingers. A deliberate flick still coasts. The filter passes intentional flicks straight through and delays the release of a settled scroll by 240 ms. It recognizes a flick from at least 8 scroll units of net movement in the last 80 ms, with a movement within 40 ms of release.
+Install this extra if a two-finger scroll keeps coasting after you stop moving and lift your fingers. A deliberate flick still coasts. The filter passes intentional flicks straight through and delays the release of a settled scroll by 240 ms. It recognizes a flick from at least 8 scroll units of net movement in the last 80 ms, with a movement within 40 ms of release. [Check compatibility](#gnome-scroll-requirements)
 
 ```sh
 ./extras/scroll-flick.sh install
@@ -124,7 +124,7 @@ To remove just the flick filter, run `./extras/scroll-flick.sh uninstall`.
 
 ### Touchpad scroll speed
 
-Check the [GNOME scroll requirements](#gnome-scroll-requirements) before installing. This extra sets two-finger scrolling to **0.2× by default**. An explicit GNOME `scroll-speed` preference takes precedence. Mouse-wheel and pointer speed keep their own settings. You can install this on its own or combine it with the flick filter. When both are enabled, flick detection uses the original finger movement.
+This extra sets two-finger scrolling to **0.2× by default**. An explicit GNOME `scroll-speed` preference takes precedence. Mouse-wheel and pointer speed keep their own settings. You can install this on its own or combine it with the flick filter. When both are enabled, flick detection uses the original finger movement. [Check compatibility](#gnome-scroll-requirements)
 
 ```sh
 ./extras/scroll-speed.sh install

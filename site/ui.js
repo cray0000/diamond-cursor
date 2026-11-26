@@ -13,24 +13,26 @@ function selectGuide(id) {
 }
 
 function showAnchor() {
-  const target = document.getElementById(location.hash.slice(1));
-  if (!target) {
-    if (!location.hash) selectGuide(preferredGuide);
+  const id = location.hash.slice(1);
+  if (Object.hasOwn(previousLinks, id)) {
+    location.replace(previousLinks[id]);
     return;
   }
-  const guide = target.closest(".panel");
-  if (guide) selectGuide(guide.id);
-  let drawer = target.closest("details");
-  while (drawer) {
-    drawer.open = true;
-    drawer = drawer.parentElement.closest("details");
+  const target = document.getElementById(id);
+  if (guides.includes(target)) {
+    selectGuide(id);
+    document.getElementById("setup").scrollIntoView();
+  } else if (history.state?.platform) {
+    selectGuide(history.state.platform);
+  } else {
+    const active = guides.find(panel => !panel.hidden);
+    history.replaceState({platform: active.id}, "");
   }
-  target.scrollIntoView();
 }
 
 function activateTab(tab) {
   selectGuide(tab.hash.slice(1));
-  if (location.hash !== tab.hash) history.pushState(null, "", tab.hash);
+  if (location.hash !== tab.hash) history.pushState({platform: tab.hash.slice(1)}, "", tab.hash);
 }
 
 tabs.forEach((tab, index) => {
@@ -54,15 +56,11 @@ tabs.forEach((tab, index) => {
   });
 });
 
+const previousLinks = JSON.parse(document.getElementById("previous-links").textContent);
 const preferredGuide = /Mac/.test(navigator.platform) ? "macos" : "linux";
-selectGuide(preferredGuide);
+selectGuide(history.state?.platform || preferredGuide);
 window.addEventListener("hashchange", showAnchor);
-if (location.hash) requestAnimationFrame(showAnchor);
-// A repeated link to the current hash still needs to reopen a closed guide.
-document.addEventListener("click", event => {
-  const link = event.target.closest("a[href^='#']");
-  if (link && link.hash === location.hash && !link.closest(".switcher")) requestAnimationFrame(showAnchor);
-});
+showAnchor();
 
 const diagram = document.querySelector(".diagram");
 const svg = diagram.querySelector("svg");
@@ -117,31 +115,3 @@ diagram.querySelectorAll("[data-key]").forEach(element => {
 });
 resizeMap();
 narrow.addEventListener("change", resizeMap);
-
-if (navigator.clipboard) {
-  document.querySelectorAll("pre").forEach(pre => {
-    const wrap = document.createElement("div");
-    wrap.className = "code-wrap";
-    pre.before(wrap);
-    const copy = document.createElement("button");
-    copy.type = "button";
-    copy.className = "copy";
-    copy.textContent = "Copy";
-    copy.setAttribute("aria-label", "Copy command block");
-    copy.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(pre.textContent.trimEnd());
-        copy.textContent = "Copied";
-      } catch {
-        const range = document.createRange();
-        range.selectNodeContents(pre);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        copy.textContent = "Selected";
-      }
-      setTimeout(() => { copy.textContent = "Copy"; }, 1800);
-    });
-    wrap.append(pre, copy);
-  });
-}

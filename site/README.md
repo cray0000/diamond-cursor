@@ -1,6 +1,8 @@
 # Website and keyboard illustration
 
-The [public site](https://cray0000.github.io/diamond-cursor/) builds from the main mapping table and clone instructions, the Linux and macOS guides, and the SVG keyboard map. Edit installation steps and optional extras in the platform READMEs. The site turns their Markdown headings into sections and expandable guides. Each third-level heading under **Optional extras** becomes an individual disclosure. The key inspector reads the Linux bindings during the build and checks the highlighted positions in the artwork.
+The [public site](https://cray0000.github.io/diamond-cursor/) opens with the interactive key map and a quick install for Linux or macOS. The quick start combines the clone command from the main README with the install commands from the platform guides. The editable practice line receives keystrokes from the visitor’s operating system.
+
+Edit the Markdown guides to update setup commands, key bindings, or detailed instructions. The build publishes the mapping table as the key reference. Each platform gets a standalone guide. Third-level sections under **Optional extras** in the Linux README get individual touchpad-tool pages. An extra that links to **GNOME scroll requirements** includes those shared notes with its instructions. The homepage sets its own reading order while using the same command blocks as the guides.
 
 ## Preview locally
 
@@ -10,6 +12,7 @@ From the repository root, run the following commands with Python 3.10 or newer.
 python3 -m venv /tmp/diamond-cursor-site
 /tmp/diamond-cursor-site/bin/pip install --require-hashes -r site/requirements.txt
 /tmp/diamond-cursor-site/bin/python site/build.py
+python3 site/test_links.py
 python3 -m http.server --bind 127.0.0.1 --directory site/dist 8000
 ```
 
