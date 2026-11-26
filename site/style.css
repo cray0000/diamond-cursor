@@ -127,12 +127,15 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
 }
 
 .intro {
+  padding-top: clamp(35px,4vw,65px);
+  padding-bottom: clamp(30px,3vw,47px);
+}
+
+.intro-columns {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 7%;
-  align-items: end;
-  padding-top: clamp(35px,4vw,65px);
-  padding-bottom: clamp(30px,3vw,47px);
+  align-items: center;
 }
 
 .platforms,.hint,.switcher,.copy {
@@ -182,7 +185,6 @@ h1 em {
 
 .pitch {
   max-width: 450px;
-  padding-bottom: 3px;
 }
 
 .pitch p {
@@ -418,7 +420,7 @@ footer .brand {
   .mast nav .source {
     padding-left: 14px;
   }
-  .intro {
+  .intro-columns {
     gap: 25px;
     grid-template-columns: 1.1fr 1fr;
   }
@@ -448,8 +450,10 @@ footer .brand {
     display: none;
   }
   .intro {
-    grid-template-columns: 1fr;
     padding-block: 29px 24px;
+  }
+  .intro-columns {
+    grid-template-columns: 1fr;
     gap: 15px;
   }
   .platforms {
