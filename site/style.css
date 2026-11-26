@@ -712,6 +712,34 @@ footer .brand {
   font-weight: 640;
   font-size: 1rem;
 }
+.more-docs {
+  background: var(--ink);
+  color: var(--paper);
+}
+.more-docs .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 40px;
+  padding-block: clamp(28px, 4vw, 54px);
+}
+.more-docs .wrap > div { flex: 1 1 30rem; }
+.more-docs h2 {
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -.035em;
+  margin: 0 0 8px;
+}
+.more-docs p {
+  max-width: 62ch;
+  color: #e1e5eb;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+.more-docs .button { margin: 0; background: var(--orange); color: var(--ink); }
+.more-docs .button:hover { background: #ffbc89; }
+.more-docs .button:focus-visible { outline-color: var(--paper); }
 .docs-layout {
   display: grid;
   grid-template-columns: clamp(215px, 20vw, 260px) minmax(0, 1fr);
