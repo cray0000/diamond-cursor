@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+"""Select the matching Clutter build for this GNOME Shell service start."""
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+release = Path(__file__).resolve().parent
+for manifest in ("files.sha256", "ubuntu.sha256"):
+    if subprocess.run(["sha256sum", "--status", "--check", manifest], cwd=release).returncode:
+        print("GNOME scroll extras skipped: the installed components have changed.", file=sys.stderr)
+        sys.exit(0)
+
+library = str(release / "lib")
+paths = [part for part in os.environ.get("LD_LIBRARY_PATH", "").split(":") if part and part != library]
+value = ":".join([library, *paths]).replace("\\", "\\\\").replace('"', '\\"')
+output = Path(sys.argv[1])
+with tempfile.NamedTemporaryFile(mode="w", dir=output.parent, delete=False) as temp:
+    temp.write(f'LD_LIBRARY_PATH="{value}"\n')
+os.replace(temp.name, output)

@@ -4,17 +4,17 @@ Hold **Left Alt** to use the arrow keys under your right hand. The diamond follo
 
 ## Quick install on Ubuntu
 
-From the `linux/` directory in your clone, run the installer.
+From the repository root, run the installer.
 
 ```sh
-./install.sh
+./linux/install.sh
 ```
 
-The script asks for sudo, reuses an existing `keyd` service or installs it from your configured APT repositories, and enables the mapping now and at boot. For Ubuntu releases before 25.04, see [Manual install](#manual-install) for the backport. From the repository root, use `./linux/install.sh`.
+The script asks for sudo, reuses an existing `keyd` service or installs it from your configured APT repositories, and enables the mapping now and at boot. For Ubuntu releases before 25.04, see [Manual install](#manual-install) for the backport.
 
 The installer also sets up touchpad pairing on a fresh install. Log out and back in, or reboot, for libinput to pick up the rule. If the installer reports an existing libinput override, follow [Touchpad pairing](#touchpad-pairing).
 
-To undo it, run `./uninstall.sh` from the same `linux/` directory. Uninstall removes the standalone mapping and keeps `keyd` available for other configurations.
+To undo it, run `./linux/uninstall.sh` from the repository root. Uninstall removes the standalone mapping and keeps `keyd` available for other configurations.
 
 If you already have a wildcard `keyd` config or have edited `/etc/keyd/diamond.conf`, the script points you to the manual steps so you can keep your bindings.
 
@@ -109,6 +109,39 @@ The filter starts immediately and whenever the touchpad appears after boot. Chec
 ```sh
 ./extras/palm-filter.sh uninstall
 ```
+
+### Touchpad flick and stop
+
+Check the [GNOME scroll requirements](#gnome-scroll-requirements) before installing. Install this extra if a two-finger scroll keeps coasting after you stop moving and lift your fingers. A deliberate flick still coasts. The filter passes intentional flicks straight through and delays the release of a settled scroll by 240 ms. It recognizes a flick from at least 8 scroll units of net movement in the last 80 ms, with a movement within 40 ms of release.
+
+```sh
+./extras/scroll-flick.sh install
+```
+
+To remove just the flick filter, run `./extras/scroll-flick.sh uninstall`.
+
+### Touchpad scroll speed
+
+Check the [GNOME scroll requirements](#gnome-scroll-requirements) before installing. This extra sets two-finger scrolling to **0.2× by default**. An explicit GNOME `scroll-speed` preference takes precedence. Mouse-wheel and pointer speed keep their own settings. You can install this on its own or combine it with the flick filter. When both are enabled, flick detection uses the original finger movement.
+
+```sh
+./extras/scroll-speed.sh install
+```
+
+After signing in, adjust the multiplier live. For example, `0.5` gives half speed and `1.0` gives full speed. Resetting the preference returns to the extra’s 0.2× preset.
+
+```sh
+gsettings set org.gnome.desktop.peripherals.touchpad scroll-speed 0.5
+gsettings reset org.gnome.desktop.peripherals.touchpad scroll-speed
+```
+
+To remove just the speed extra, run `./extras/scroll-speed.sh uninstall`. Your explicit GNOME preference is preserved.
+
+## GNOME scroll requirements
+
+Run the scripts as your desktop user on **Ubuntu 26.10 amd64, Ubuntu GNOME Wayland session, Mutter package `51.0-1ubuntu3`**. These fixes use GNOME’s input pipeline in the signed-in desktop. They work independently of keyd and Unpalm. **Log out and back in once** after installing or uninstalling either extra. You can install both before signing out.
+
+The first installation needs Python 3, `curl`, Bubblewrap, APT and an internet connection. It downloads checksum-verified Ubuntu source archives and build dependencies into a temporary directory, then compiles a private Clutter library. No sudo is required. The second extra reuses the build. Each extra has its own per-user GNOME Shell service override. Removing the last extra also removes the shared build. If an update changes the GNOME binaries, the next sign-in uses Ubuntu’s library. Rerun the installer for a compatible build. The [Mutter patch](extras/gnome-scroll/mutter-51.patch) follows the affected Clutter sources’ LGPL-2.0-or-later license. [Ubuntu Mutter source package](https://launchpad.net/ubuntu/+source/mutter/51.0-1ubuntu3)
 
 ## How it works
 

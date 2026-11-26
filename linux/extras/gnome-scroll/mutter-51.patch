@@ -1,0 +1,319 @@
+--- a/clutter/clutter/clutter-main.c
++++ b/clutter/clutter/clutter-main.c
+@@ -23,6 +23,7 @@
+ #include "config.h"
+ 
+ #include <stdlib.h>
++#include <math.h>
+ #include <glib/gi18n-lib.h>
+ 
+ #include "clutter/clutter-actor-private.h"
+@@ -46,6 +47,8 @@
+ 
+ /* main context */
+ static ClutterContext *ClutterCntx       = NULL;
++static gboolean scroll_flick_enabled;
++static gboolean scroll_speed_enabled;
+ 
+ /* debug flags */
+ guint clutter_debug_flags       = 0;
+@@ -79,6 +82,8 @@
+       return NULL;
+     }
+ 
++  scroll_flick_enabled = g_strcmp0 (g_getenv ("DIAMOND_CURSOR_SCROLL_FLICK"), "1") == 0;
++  scroll_speed_enabled = g_strcmp0 (g_getenv ("DIAMOND_CURSOR_SCROLL_SPEED"), "1") == 0;
+   ClutterCntx = clutter_context_new (backend_constructor, user_data,
+                                      error);
+   if (!ClutterCntx)
+@@ -122,6 +127,216 @@
+   return continue_emission;
+ }
+ 
++G_DEFINE_AUTOPTR_CLEANUP_FUNC (ClutterEvent, clutter_event_free)
++
++/* Preserve ordinary motion, and let the application handle intentional flings. */
++#define SCROLL_LIFT_WINDOW_MS 80
++#define SCROLL_LIFT_MAX_GAP_MS 40
++#define SCROLL_LIFT_DISTANCE 8.0
++#define SCROLL_LIFT_SETTLE_MS 240
++
++typedef struct {
++  gint64 time_ms;
++  double x, y;
++} ScrollLiftSample;
++
++typedef struct {
++  ClutterStage *stage;  /* Owns this state through object data. */
++  GWeakRef actor, grab, device;
++  gboolean had_grab;
++  ScrollLiftSample samples[128];
++  guint next, count, axes, timer;
++  ClutterEvent *pending;
++  gint64 queued_at;
++} ScrollLiftState;
++
++static void
++dispatch_stage_event (ClutterStage *stage, ClutterEvent *event, ClutterActor *event_actor);
++
++static void
++clear_scroll_lift (ScrollLiftState *state)
++{
++  g_clear_handle_id (&state->timer, g_source_remove);
++  g_clear_pointer (&state->pending, clutter_event_free);
++  state->count = state->next = state->axes = 0;
++}
++
++static void
++free_scroll_lift (gpointer data)
++{
++  ScrollLiftState *state = data;
++  clear_scroll_lift (state);
++  g_weak_ref_clear (&state->actor);
++  g_weak_ref_clear (&state->grab);
++  g_weak_ref_clear (&state->device);
++  g_free (state);
++}
++
++static gboolean
++scroll_lift_target_matches (ScrollLiftState *state, ClutterActor *actor)
++{
++  g_autoptr (ClutterActor) saved_actor = g_weak_ref_get (&state->actor);
++  g_autoptr (ClutterActor) saved_grab = g_weak_ref_get (&state->grab);
++  return actor && actor == saved_actor &&
++         (saved_grab || !state->had_grab) &&
++         clutter_stage_get_grab_actor (state->stage) == saved_grab;
++}
++
++static void
++send_scroll_lift (ScrollLiftState *state, gint64 time_us)
++{
++  g_autoptr (ClutterEvent) old = g_steal_pointer (&state->pending);
++  g_autoptr (ClutterStage) stage = g_object_ref (state->stage);
++  clear_scroll_lift (state);
++  if (!old || CLUTTER_ACTOR_IN_DESTRUCTION (stage))
++    return;
++  ClutterActor *actor = clutter_stage_get_event_actor (stage, old);
++  if (!scroll_lift_target_matches (state, actor))
++    return;
++  graphene_point_t position;
++  clutter_event_get_position (old, &position);
++  g_autoptr (ClutterEvent) stop = clutter_event_scroll_smooth_new (
++      clutter_event_get_flags (old), time_us, clutter_event_get_source_device (old),
++      clutter_event_get_device_tool (old), clutter_event_get_state (old),
++      position, GRAPHENE_POINT_INIT (0, 0), clutter_event_get_scroll_flags (old),
++      CLUTTER_SCROLL_SOURCE_FINGER, clutter_event_get_scroll_finish_flags (old));
++  dispatch_stage_event (stage, stop, actor);
++}
++
++static gboolean
++on_scroll_lift_timeout (gpointer data)
++{
++  ScrollLiftState *state = data;
++  state->timer = 0;
++  gint64 elapsed = g_get_monotonic_time () - state->queued_at;
++  send_scroll_lift (state, clutter_event_get_time_us (state->pending) + elapsed);
++  return G_SOURCE_REMOVE;
++}
++
++static gboolean
++filter_scroll_lift (ClutterStage *stage, ClutterEvent *event, ClutterActor *actor)
++{
++  const char *key = "diamond-cursor-scroll-lift";
++  ScrollLiftState *state = g_object_get_data (G_OBJECT (stage), key);
++  ClutterEventType type = clutter_event_type (event);
++  if (type != CLUTTER_SCROLL)
++    {
++      if (!state)
++        return FALSE;
++      if (type == CLUTTER_DEVICE_REMOVED)
++        {
++          g_autoptr (ClutterInputDevice) owner = g_weak_ref_get (&state->device);
++          if (owner == clutter_event_get_source_device (event))
++            clear_scroll_lift (state);
++        }
++      else if (state->pending &&
++               (type == CLUTTER_BUTTON_PRESS || type == CLUTTER_BUTTON_RELEASE ||
++                type == CLUTTER_TOUCH_BEGIN || type == CLUTTER_TOUCHPAD_PINCH ||
++                type == CLUTTER_TOUCHPAD_SWIPE))
++        send_scroll_lift (state, clutter_event_get_time_us (event));
++      return FALSE;
++    }
++
++  if (clutter_event_get_scroll_source (event) != CLUTTER_SCROLL_SOURCE_FINGER)
++    {
++      if (state && state->pending)
++        send_scroll_lift (state, clutter_event_get_time_us (event));
++      return FALSE;
++    }
++  if (clutter_event_get_scroll_direction (event) != CLUTTER_SCROLL_SMOOTH || !actor)
++    return FALSE;
++  if (!state)
++    {
++      state = g_new0 (ScrollLiftState, 1);
++      state->stage = stage;
++      g_weak_ref_init (&state->actor, NULL);
++      g_weak_ref_init (&state->grab, NULL);
++      g_weak_ref_init (&state->device, NULL);
++      g_object_set_data_full (G_OBJECT (stage), key, state, free_scroll_lift);
++    }
++  ClutterInputDevice *device = clutter_event_get_source_device (event);
++  gint64 now = clutter_event_get_time_us (event);
++  gint64 ms = now / 1000;
++  if (state->pending)
++    send_scroll_lift (state, now);
++  g_autoptr (ClutterInputDevice) owner = g_weak_ref_get (&state->device);
++  if (owner != device || !scroll_lift_target_matches (state, actor))
++    {
++      clear_scroll_lift (state);
++      ClutterActor *grab = clutter_stage_get_grab_actor (stage);
++      state->had_grab = grab != NULL;
++      g_weak_ref_set (&state->actor, actor);
++      g_weak_ref_set (&state->grab, grab);
++      g_weak_ref_set (&state->device, device);
++    }
++  double dx, dy;
++  clutter_event_get_scroll_delta (event, &dx, &dy);
++  guint finish = clutter_event_get_scroll_finish_flags (event);
++  if (dx != 0 || dy != 0)
++    {
++      /* Match the wire units and 24.8 fixed-point rounding used in the trial. */
++      state->samples[state->next] = (ScrollLiftSample) {
++        ms, nearbyint (dx * 10 * 256) / 256, nearbyint (dy * 10 * 256) / 256
++      };
++      state->next = (state->next + 1) % G_N_ELEMENTS (state->samples);
++      state->count = MIN (state->count + 1, G_N_ELEMENTS (state->samples));
++      if (dx != 0) state->axes |= CLUTTER_SCROLL_FINISHED_HORIZONTAL;
++      if (dy != 0) state->axes |= CLUTTER_SCROLL_FINISHED_VERTICAL;
++      state->axes &= ~finish;
++      return FALSE;
++    }
++  if (!finish || !state->count)
++    return FALSE;
++  state->axes &= ~finish;
++  if (state->axes)
++    return FALSE;  /* The other axis is still scrolling. */
++
++  double x = 0, y = 0;
++  const guint capacity = G_N_ELEMENTS (state->samples);
++  guint index = state->next;
++  gint64 last_ms = state->samples[(index + capacity - 1) % capacity].time_ms;
++  for (guint i = 0; i < state->count; i++)
++    {
++      index = (index + capacity - 1) % capacity;
++      ScrollLiftSample *sample = &state->samples[index];
++      if (ms - sample->time_ms > SCROLL_LIFT_WINDOW_MS)
++        break;
++      x += sample->x;
++      y += sample->y;
++    }
++  clear_scroll_lift (state);
++  if (ms - last_ms <= SCROLL_LIFT_MAX_GAP_MS && hypot (x, y) >= SCROLL_LIFT_DISTANCE)
++    return FALSE;
++
++  state->pending = clutter_event_copy (event);
++  state->queued_at = g_get_monotonic_time ();
++  state->timer = g_timeout_add (SCROLL_LIFT_SETTLE_MS, on_scroll_lift_timeout, state);
++  return TRUE;
++}
++
++/* Use the extra's preset until the user chooses a multiplier in GNOME. */
++static double
++finger_scroll_speed (ClutterStage *stage, ClutterEvent *event)
++{
++  if (clutter_event_type (event) != CLUTTER_SCROLL ||
++      clutter_event_get_scroll_source (event) != CLUTTER_SCROLL_SOURCE_FINGER ||
++      clutter_event_get_scroll_direction (event) != CLUTTER_SCROLL_SMOOTH)
++    return 1.0;
++
++  const char *key = "diamond-cursor-scroll-settings";
++  GSettings *settings = g_object_get_data (G_OBJECT (stage), key);
++  if (!settings)
++    {
++      settings = g_settings_new ("org.gnome.desktop.peripherals.touchpad");
++      g_object_set_data_full (G_OBJECT (stage), key, settings, g_object_unref);
++    }
++  if (!g_settings_is_writable (settings, "scroll-speed"))
++    return g_settings_get_double (settings, "scroll-speed");
++
++  g_autoptr (GVariant) preference = g_settings_get_user_value (settings, "scroll-speed");
++  return preference ? g_variant_get_double (preference) : 0.2;
++}
++
+ /**
+  * clutter_stage_handle_event:
+  * @stage: a #ClutterStage.
+@@ -139,10 +354,8 @@
+ clutter_stage_handle_event (ClutterStage *stage,
+                             ClutterEvent *event)
+ {
+-  ClutterContext *context;
+   ClutterActor *event_actor = NULL;
+   ClutterEventType event_type;
+-  gboolean filtered;
+ 
+   g_return_if_fail (CLUTTER_IS_STAGE (stage));
+   g_return_if_fail (event != NULL);
+@@ -151,7 +364,6 @@
+   if (CLUTTER_ACTOR_IN_DESTRUCTION (stage))
+     return;
+ 
+-  context = clutter_actor_get_context (CLUTTER_ACTOR (stage));
+   event_type = clutter_event_type (event);
+ 
+   switch (event_type)
+@@ -180,6 +392,23 @@
+       event_actor = clutter_stage_get_event_actor (stage, event);
+     }
+ 
++  if (scroll_flick_enabled && filter_scroll_lift (stage, event, event_actor))
++    return;
++
++  /* Classify the original finger movement before scaling the delivered distance. */
++  double scroll_speed = scroll_speed_enabled ? finger_scroll_speed (stage, event) : 1.0;
++  g_autoptr (ClutterEvent) scaled = NULL;
++  if (scroll_speed != 1.0)
++    scaled = clutter_event_copy_scaled_scroll (event, scroll_speed);
++  dispatch_stage_event (stage, scaled ? scaled : event, event_actor);
++}
++
++static void
++dispatch_stage_event (ClutterStage *stage, ClutterEvent *event, ClutterActor *event_actor)
++{
++  ClutterContext *context = clutter_actor_get_context (CLUTTER_ACTOR (stage));
++  ClutterEventType event_type = clutter_event_type (event);
++  gboolean filtered;
+   context->current_event = g_slist_prepend (context->current_event, event);
+ 
+   filtered = _clutter_event_process_filters (event, event_actor);
+--- a/clutter/clutter/clutter-event.c
++++ b/clutter/clutter/clutter-event.c
+@@ -1981,6 +1981,16 @@
+   g_set_object (&event->motion.source_device, source_device);
+ 
+   return event;
++}
++
++ClutterEvent *
++clutter_event_copy_scaled_scroll (const ClutterEvent *event,
++                                  double              factor)
++{
++  ClutterEvent *scaled = clutter_event_copy (event);
++  scaled->scroll.delta_x *= factor;
++  scaled->scroll.delta_y *= factor;
++  return scaled;
+ }
+ 
+ ClutterEvent *
+--- a/clutter/clutter/clutter-event-private.h
++++ b/clutter/clutter/clutter-event-private.h
+@@ -54,6 +54,9 @@
+                                          graphene_point_t        delta_unaccel,
+                                          graphene_point_t        delta_constrained,
+                                          double                 *axes);
++ClutterEvent * clutter_event_copy_scaled_scroll (const ClutterEvent *event,
++                                                 double              factor);
++
+ CLUTTER_EXPORT
+ ClutterEvent * clutter_event_scroll_smooth_new (ClutterEventFlags         flags,
+                                                 int64_t                   timestamp_us,

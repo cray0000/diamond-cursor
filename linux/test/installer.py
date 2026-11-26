@@ -49,6 +49,9 @@ class InstallerSandbox(unittest.TestCase):
         script.chmod(0o755)
 
     def run_script(self, name, *args, success=True, uid=0):
+        return self.run_sandbox([f"./linux/{name}.sh", *args], success=success, uid=uid)
+
+    def run_sandbox(self, command, success=True, uid=0):
         result = subprocess.run([
             "bwrap", "--unshare-all", "--die-with-parent", "--uid", str(uid), "--gid", str(uid),
             "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run",
@@ -56,7 +59,7 @@ class InstallerSandbox(unittest.TestCase):
             "--bind", self.etc, "/etc", "--ro-bind", LINUX, "/tmp/config repo/linux",
             *self.mounts, "--setenv", "XDG_STATE_HOME", "/tmp/state/userstate",
             "--setenv", "PATH", "/tmp/state/bin:/usr/bin:/bin", "--chdir", "/tmp/config repo",
-            "--", f"./linux/{name}.sh", *args,
+            "--", *command,
         ], capture_output=True, text=True)
         self.assertEqual(result.returncode == 0, success, result.stdout + result.stderr)
         return result

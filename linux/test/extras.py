@@ -183,5 +183,100 @@ class PalmFilterTest(InstallerSandbox):
         self.assertFalse(self.bundle.exists())
 
 
+class ScrollExtrasTest(InstallerSandbox):
+    def setUp(self):
+        super().setUp()
+        self.home = self.root / "home"
+        self.home.mkdir()
+        self.bundle = self.home / ".local/share/diamond-cursor/gnome-scroll"
+        self.units = self.home / ".config/systemd/user/org.gnome.Shell@ubuntu.service.d"
+        (self.etc / "os-release").write_text("ID=ubuntu\nVERSION_ID=26.10\n")
+        self.stub("dpkg-query", "echo '51.0-1ubuntu3 amd64'")
+        self.stub("gsettings", 'test "$1" = range')
+        self.stub("systemctl", 'test ! -f /tmp/state/reload-error || test "$2" != daemon-reload')
+        self.stub("build", '''
+            echo build >> /tmp/state/commands
+            test ! -f /tmp/state/build-error
+            mkdir "$1/lib"
+            echo library > "$1/lib/libmutter-clutter-51.so.0"
+            sha256sum /etc/os-release > "$1/ubuntu.sha256"
+        ''')
+        self.mounts += [
+            "--setenv", "HOME", "/tmp/state/home",
+            "--setenv", "XDG_CONFIG_HOME", "/tmp/state/home/.config",
+            "--ro-bind", self.bin / "build", "/tmp/config repo/linux/extras/gnome-scroll/build.sh",
+        ]
+
+    def extra(self, name, action, **kwargs):
+        return self.run_script(f"extras/scroll-{name}", action, uid=1000, **kwargs)
+
+    def prepare(self):
+        return self.run_sandbox(["/tmp/state/home/.local/share/diamond-cursor/gnome-scroll/current/prepare",
+                                 "/tmp/state/login.env"], uid=1000)
+
+    def conf(self, name):
+        return self.units / f"65-diamond-cursor-scroll-{name}.conf"
+
+    def test_independent_install_and_removal_in_both_orders(self):
+        for first, second in (("flick", "speed"), ("speed", "flick")):
+            with self.subTest(first=first):
+                self.log.write_text("")
+                self.extra(first, "install")
+                self.extra(first, "install")
+                self.assertTrue(self.conf(first).is_symlink())
+                self.assertFalse(self.conf(second).is_symlink())
+                release = self.bundle / "current"
+                self.assertIn(f"Environment=DIAMOND_CURSOR_SCROLL_{first.upper()}=1",
+                              (release / f"{first}.conf").read_text())
+                self.extra(second, "install")
+                self.assertEqual(self.log.read_text().splitlines(), ["build"])
+                self.extra(first, "uninstall")
+                self.assertFalse(self.conf(first).is_symlink())
+                self.assertTrue(self.conf(second).is_symlink())
+                self.prepare()
+                self.assertIn("LD_LIBRARY_PATH=", (self.root / "login.env").read_text())
+                self.extra(second, "uninstall")
+                self.extra(second, "uninstall")
+                self.assertFalse(self.bundle.exists())
+
+    def test_upgrade_fallback_then_rebuild(self):
+        self.extra("speed", "install")
+        old = (self.bundle / "current").resolve()
+        with (self.etc / "os-release").open("a") as f:
+            f.write("PRETTY_NAME=Ubuntu\n")
+        result = self.prepare()
+        self.assertIn("skipped", result.stderr)
+        self.assertFalse((self.root / "login.env").exists())
+        self.extra("flick", "install")
+        self.assertFalse(old.exists())
+        self.assertTrue(self.conf("speed").is_symlink())
+        self.prepare()
+        self.assertTrue((self.root / "login.env").is_file())
+
+    def test_failures_preserve_other_extra_and_foreign_files(self):
+        failure = self.root / "build-error"
+        failure.touch()
+        self.extra("flick", "install", success=False)
+        self.assertFalse(self.conf("flick").is_symlink())
+        failure.unlink()
+        self.extra("flick", "install")
+        (self.root / "reload-error").touch()
+        self.extra("speed", "install", success=False)
+        self.assertTrue(self.conf("flick").is_symlink())
+        self.assertFalse(self.conf("speed").is_symlink())
+        self.extra("flick", "uninstall", success=False)
+        self.assertTrue(self.conf("flick").is_symlink())
+        self.conf("speed").write_text("my own override")
+        self.extra("speed", "install", success=False)
+        self.assertEqual(self.conf("speed").read_text(), "my own override")
+
+    def test_unsupported_install_but_removal_after_upgrade(self):
+        self.extra("speed", "install")
+        self.stub("dpkg-query", "echo '51.1 amd64'")
+        self.assertIn("51.0-1ubuntu3", self.extra("flick", "install", success=False).stderr)
+        self.extra("speed", "uninstall")
+        self.assertFalse(self.bundle.exists())
+
+
 if __name__ == "__main__":
     unittest.main()

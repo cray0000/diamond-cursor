@@ -1,0 +1,5 @@
+[Service]
+Environment=DIAMOND_CURSOR_SCROLL_@FLAG@=1
+EnvironmentFile=-%t/diamond-cursor-scroll-@NAME@.env
+ExecStartPre=-/usr/bin/rm -f %t/diamond-cursor-scroll-@NAME@.env
+ExecStartPre=-%h/.local/share/diamond-cursor/gnome-scroll/current/prepare %t/diamond-cursor-scroll-@NAME@.env

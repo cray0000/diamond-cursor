@@ -8,7 +8,7 @@ GitHub Actions runs the tests on Ubuntu for every push. To run them locally, sta
 python3 test/installer.py
 ```
 
-**Extras tests** use the same sandbox with simulated GNOME settings and touchpads. They cover prior settings, edge widths, device selection, download verification, and removal after a failed start.
+**Extras tests** use the same sandbox with simulated GNOME settings and touchpads. They cover prior settings, edge widths, device selection, download verification, and removal after a failed start. The scroll-extra tests substitute a build fixture and exercise independent installation and removal in both orders, reuse of the shared library, upgrade fallback, and rollback after a failed install.
 
 ```sh
 python3 -B test/extras.py
