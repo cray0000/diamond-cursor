@@ -1,0 +1,21 @@
+<svg class="demo-board" viewBox="0 0 656 266" role="presentation">
+  <defs>
+    <linearGradient id="demo-case-$method" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#263247"/><stop offset="1" stop-color="#192335"/>
+    </linearGradient>
+    <linearGradient id="demo-skin-$method" x1="0" y1="0" x2=".8" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#fbd6b4"/><stop offset=".65" stop-color="#e7b18c"/><stop offset="1" stop-color="#c98969"/>
+    </linearGradient>
+  </defs>
+  <rect width="656" height="266" fill="url(#demo-case-$method)"/>
+  <g class="demo-keys"></g>
+  <path class="demo-travel" fill="none" stroke="#ffb16e" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="3 7"/>
+  <g class="demo-hand">
+    <path class="hand-outline" fill="url(#demo-skin-$method)" stroke="#78523f" stroke-width="2" stroke-linejoin="round"/>
+    <g class="hand-nails" fill="#f8d4bd" stroke="#be8c74" stroke-width="1"/>
+    <g fill="none" stroke="#ad7b61" stroke-width="1.7" stroke-linecap="round">
+      <path d="M-49 85q9 0 12-6 M-7 104q15 7 22 24 M35 90q7-4 15-2 M79 89q8-4 15-2 M117 95q8-3 14-1"/>
+    </g>
+  </g>
+  <rect class="demo-strike" rx="5" fill="none" stroke="#ffab69" stroke-width="3"/>
+</svg>

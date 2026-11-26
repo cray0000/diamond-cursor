@@ -1,0 +1,25 @@
+<template id="edit-demo-template">
+  <figure class="edit-demo" aria-labelledby="demo-caption">
+    <figcaption id="demo-caption">Watch a two-line edit</figcaption>
+    <div class="demo-playback">
+      <button type="button" class="demo-compare" hidden>Compare both</button>
+      <button type="button" class="demo-play">Play</button>
+    </div>
+    <div class="demo-note" aria-hidden="true">
+      <div class="demo-text" dir="ltr"></div>
+      <div class="demo-step"><kbd></kbd><span></span></div>
+    </div>
+    <div class="demo-methods" role="group" aria-label="Choose a keyboard to loop">
+      <button class="demo-method" type="button" data-mode="0" aria-label="Loop the standard keyboard example" aria-pressed="false">
+        <span class="demo-method-title">Standard keyboard <span class="demo-status"></span></span>
+        $standard
+      </button>
+      <button class="demo-method" type="button" data-mode="1" aria-label="Loop the Diamond Cursor example" aria-pressed="false">
+        <span class="demo-method-title">Diamond Cursor <span class="demo-status"></span></span>
+        $diamond
+      </button>
+    </div>
+    <p class="demo-hint">Watch both passes or choose a keyboard to loop it. This example uses Left Alt on Linux.</p>
+    <p class="demo-transcript">Both passes type two lines, remove the extra “s” from “Bring notess.” and change the meeting time from six to ten. With dedicated keys the right hand travels to the arrows and Backspace. With Left Alt held, J moves left, H sends Backspace, and I moves up beside the home row.</p>
+  </figure>
+</template>

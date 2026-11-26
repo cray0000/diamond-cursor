@@ -224,6 +224,8 @@ def home_page(guides, routes):
 
     svg = (ROOT / "assets/keyboard-map.svg").read_text()
     index = template("index.html", diagram=svg, keys=key_actions(svg), previous_links=json.dumps(routes),
+                     edit_demo=template("edit-demo.html", standard=template("edit-keyboard.svg", method="standard"),
+                                        diamond=template("edit-keyboard.svg", method="diamond")),
                      linux_commands=commands(linux.child("linux-quick-install-on-ubuntu")),
                      linux_practice=template("practice.html", platform="linux", modifier="<kbd>Left Alt</kbd>"),
                      mac_prepare=mac_install.child("macos-prepare-karabiner-elements").content(),
@@ -232,7 +234,7 @@ def home_page(guides, routes):
                      mac_practice=template("practice.html", platform="macos", modifier="your keyboard’s modifier"))
     write_page("index.html", "Diamond Cursor · Keyboard navigation for Linux and macOS",
                "Move and select text with the physical I/J/K/L diamond. Explore the map and install on Linux or macOS.",
-               index, home="", scripts='<script src="ui.js" defer></script>')
+               index, home="", scripts='<script src="ui.js" defer></script><script src="edit-demo.js" defer></script>')
 
 
 def key_reference(bindings, tools):
@@ -297,7 +299,7 @@ def build():
     key_reference(guides[""].child("mappings"), extras.children)
     platform_guides(guides, extras, requirements)
     touchpad_guides(extras, requirements, needs_requirements)
-    for name in ("style.css", "ui.js", "copy.js", "mark.svg"):
+    for name in ("style.css", "ui.js", "edit-demo.js", "copy.js", "mark.svg"):
         shutil.copy2(SITE / name, DIST)
     shutil.copytree(SITE / "fonts", DIST / "fonts", dirs_exist_ok=True)
 
